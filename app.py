@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: gbk -*-
 import os
 import datetime
 import shutil
@@ -17,8 +17,8 @@ from interact import Interact, api_hps_ms, api_net_g_ms
 from response import ResponseData
 
 app = Flask(__name__,
-            static_url_path='/',  # é…ç½®é™æ€æ–‡ä»¶çš„è®¿é—® url å‰ç¼€
-            static_folder='static',  # é…ç½®é™æ€æ–‡ä»¶çš„æ–‡ä»¶å¤¹
+            static_url_path='/',  # ÅäÖÃ¾²Ì¬ÎÄ¼şµÄ·ÃÎÊ url Ç°×º
+            static_folder='static',  # ÅäÖÃ¾²Ì¬ÎÄ¼şµÄÎÄ¼ş¼Ğ
             )
 CORS(app, resources=r'/*')
 async_task = FlaskThreadPool()
@@ -29,7 +29,7 @@ async_task.init_app(app)
 
 def create_logger(log_path="log/interact"):
     """
-    å°†æ—¥å¿—è¾“å‡ºåˆ°æ—¥å¿—æ–‡ä»¶å’Œæ§åˆ¶å°
+    ½«ÈÕÖ¾Êä³öµ½ÈÕÖ¾ÎÄ¼şºÍ¿ØÖÆÌ¨
     """
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.INFO)
@@ -72,7 +72,7 @@ def GetMd5(t):
 @app.route('/getPid', methods=['GET', 'POST'])
 def pid():
     """
-    è·å–é¡¹ç›®Pid
+    »ñÈ¡ÏîÄ¿Pid
     """
     return ResponseData().renderSuccess(getPid())
 
@@ -80,7 +80,7 @@ def pid():
 @app.route('/wifeVoice', methods=['GET', 'POST'])
 def wifeVoice():
     """
-    ç”Ÿæˆè€å©†è¯­éŸ³
+    Éú³ÉÀÏÆÅÓïÒô
     """
     t = time.time()
     text = request.values.get("text")
@@ -90,8 +90,8 @@ def wifeVoice():
     Config = request.values.get("config", 'config/config.json')
     time_str = GetTime()
     path_src = Path + "/static/" + time_str
-    if not os.path.exists(path_src):  # æ˜¯å¦å­˜åœ¨è¿™ä¸ªæ–‡ä»¶å¤¹
-        os.makedirs(path_src)  # å¦‚æœæ²¡æœ‰è¿™ä¸ªæ–‡ä»¶å¤¹ï¼Œé‚£å°±åˆ›å»ºä¸€ä¸ª
+    if not os.path.exists(path_src):  # ÊÇ·ñ´æÔÚÕâ¸öÎÄ¼ş¼Ğ
+        os.makedirs(path_src)  # Èç¹ûÃ»ÓĞÕâ¸öÎÄ¼ş¼Ğ£¬ÄÇ¾Í´´½¨Ò»¸ö
     out_path = "{}/{}.wav".format(path_src, GetMd5(text))
     Interact(
         text=text,
@@ -117,22 +117,22 @@ def wifeVoice():
 
 def callback(future):
     e = future.exception()
-    log.error("å¼‚æ­¥ä»»åŠ¡çš„é”™è¯¯ï¼š{}".format(e))
+    log.error("Òì²½ÈÎÎñµÄ´íÎó£º{}".format(e))
 
 
 @async_task.submit(callback)
 def delFile(i=3):
     """
-    åˆ é™¤å¤§äºå¤šå°‘å¤©çš„æ–‡ä»¶
+    É¾³ı´óÓÚ¶àÉÙÌìµÄÎÄ¼ş
     """
     path = "{}/static".format(Path)
     for file_name in os.listdir(path):
         try:
             if datetime.datetime.now() + datetime.timedelta(days=-i) > datetime.datetime(*time.strptime(file_name, timeConfig)[:6]):
                 shutil.rmtree("{}/{}".format(path, file_name))
-                log.warning("åˆ é™¤çš„æ–‡ä»¶å¤¹åç§°:{}".format(file_name))
+                log.warning("É¾³ıµÄÎÄ¼ş¼ĞÃû³Æ:{}".format(file_name))
         except Exception:
-            log.error("åˆ é™¤æ–‡ä»¶å¤±è´¥ï¼š{}\t{}".format(file_name, Exception))
+            log.error("É¾³ıÎÄ¼şÊ§°Ü£º{}\t{}".format(file_name, Exception))
 
 
 if __name__ == '__main__':
