@@ -135,4 +135,4 @@ def delFile(i=3):
 
 
 if __name__ == '__main__':
-    app.run('127.0.0.1', 34337)
+    app.run('0.0.0.0', 34337)
