@@ -10,8 +10,9 @@ from random import randint
 from flask_cors import CORS
 from flask import Flask, request
 
+import utils
 from Flask_Threadpool import FlaskThreadPool
-from interact import *
+from interact import Interact, api_hps_ms, api_net_g_ms
 from response import ResponseData
 
 app = Flask(__name__,
