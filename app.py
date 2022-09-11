@@ -2,6 +2,8 @@ import os
 import datetime
 import shutil
 import time
+import logging
+import logging.handlers
 from hashlib import md5
 from random import randint
 
@@ -20,7 +22,30 @@ CORS(app, resources=r'/*')
 async_task = FlaskThreadPool()
 Path = os.path.dirname(os.path.realpath(__file__))
 timeConfig = "%Y%m%d"
+async_task.init_app(app)
 
+
+def create_logger(log_path="log/interact"):
+    """
+    将日志输出到日志文件和控制台
+    """
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+    formatter = logging.Formatter(
+        fmt='%(asctime)s - %(process)d - %(filename)s_[line:%(lineno)d] - %(levelname)s - %(message)s',
+        datefmt="%Y-%m-%d %X"
+    )
+    fh = logging.handlers.TimedRotatingFileHandler(filename=log_path, when='S', interval=1, backupCount=3, encoding="utf-8")
+    fh.suffix = "%Y-%m-%d_%H-%M-%S.log"
+    ch = logging.StreamHandler()
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+    return logger
+
+
+log = create_logger()
 
 
 def getPid():
@@ -83,14 +108,14 @@ def wifeVoice():
         "path": out_path,
         "url": "{}/{}/{}.wav".format(request.host, time_str, GetMd5(text))
     }
-    print(ret)
-    # delFile()
+    log.info(ret)
+    delFile()
     return ResponseData().renderSuccess(ret)
 
 
 def callback(future):
     e = future.exception()
-    print("异步任务的错误：" + str(e))
+    log.error("异步任务的错误：{}".format(e))
 
 
 @async_task.submit(callback)
@@ -101,11 +126,11 @@ def delFile(i=3):
     path = "{}/static".format(Path)
     for file_name in os.listdir(path):
         try:
-            print(file_name)
-            if datetime.datetime.now() + datetime.timedelta(days=-i) < datetime.datetime(*time.strptime(file_name, timeConfig)[:6]):
+            if datetime.datetime.now() + datetime.timedelta(days=-i) > datetime.datetime(*time.strptime(file_name, timeConfig)[:6]):
                 shutil.rmtree("{}/{}".format(path, file_name))
-        except EOFError:
-            print(EOFError)
+                log.warning("删除的文件夹名称:{}".format(file_name))
+        except Exception:
+            log.error("删除文件失败：{}\t{}".format(file_name, Exception))
 
 
 if __name__ == '__main__':

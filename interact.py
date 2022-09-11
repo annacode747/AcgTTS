@@ -50,9 +50,10 @@ def ask_if_continue():
 
 
 def print_speakers(speakers):
-    print('ID\tSpeaker')
-    for id, name in enumerate(speakers):
-        print(str(id) + '\t' + name)
+    pass
+    # print('ID\tSpeaker')
+    # for id, name in enumerate(speakers):
+    #     print(str(id) + '\t' + name)
 
 
 def get_speaker_id(message):
