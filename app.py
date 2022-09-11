@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import datetime
 import shutil
@@ -135,4 +136,4 @@ def delFile(i=3):
 
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', 34337)
+    app.run('127.0.0.1', 34337)
