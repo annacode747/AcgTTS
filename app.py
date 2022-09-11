@@ -1,4 +1,4 @@
-# -*- coding: gbk -*-
+# coding=gbk
 import os
 import datetime
 import shutil
@@ -37,7 +37,8 @@ def create_logger(log_path="log/interact"):
         fmt='%(asctime)s - %(process)d - %(filename)s_[line:%(lineno)d] - %(levelname)s - %(message)s',
         datefmt="%Y-%m-%d %X"
     )
-    fh = logging.handlers.TimedRotatingFileHandler(filename=log_path, when='S', interval=1, backupCount=3, encoding="utf-8")
+    fh = logging.handlers.TimedRotatingFileHandler(filename=log_path, when='S', interval=1, backupCount=3,
+                                                   encoding="utf-8")
     fh.suffix = "%Y-%m-%d_%H-%M-%S.log"
     ch = logging.StreamHandler()
     fh.setFormatter(formatter)
@@ -128,7 +129,8 @@ def delFile(i=3):
     path = "{}/static".format(Path)
     for file_name in os.listdir(path):
         try:
-            if datetime.datetime.now() + datetime.timedelta(days=-i) > datetime.datetime(*time.strptime(file_name, timeConfig)[:6]):
+            if datetime.datetime.now() + datetime.timedelta(days=-i) > datetime.datetime(
+                    *time.strptime(file_name, timeConfig)[:6]):
                 shutil.rmtree("{}/{}".format(path, file_name))
                 log.warning("删除的文件夹名称:{}".format(file_name))
         except Exception:
@@ -136,4 +138,4 @@ def delFile(i=3):
 
 
 if __name__ == '__main__':
-    app.run('127.0.0.1', 34337)
+    app.run('0.0.0.0', 34337)
