@@ -83,12 +83,16 @@ def wifeVoice():
     """
     生成老婆语音
     """
+    global hps_ms
+    hps_ms = None
     t = time.time()
     text = request.values.get("text")
     speaker_id = request.values.get("speaker_id", randint(0, len(getSpeakers()) - 1))
     choice = request.values.get("choice", 't')
     model = request.values.get("model", 'model/1374_epochs.pth')
-    Config = request.values.get("config", 'config/config.json')
+    Config = request.values.get("config")
+    if Config is not None:
+        hps_ms = utils.get_hparams_from_file(Config)
     time_str = GetTime()
     path_src = Path + "/static/" + time_str
     if not os.path.exists(path_src):  # 是否存在这个文件夹
@@ -97,11 +101,10 @@ def wifeVoice():
     Interact(
         text=text,
         out_path=out_path,
-        # hps_ms=hps_ms,
+        hps_ms=hps_ms,
         speaker_id=speaker_id,
         choice=choice,
-        model=model,
-        config=Config
+        model=model
     )
     t = time.time() - t
     size = os.stat(out_path).st_size

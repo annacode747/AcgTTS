@@ -108,16 +108,20 @@ class Interact:
         # model = input('Path of a VITS model: ')
         # config = input('Path of a config file: ')
         try:
-            hps_ms = hps_ms if hps_ms is not None else api_hps_ms
-            net_g_ms = api_net_g_ms if hps_ms is not None else SynthesizerTrn(
-                len(hps_ms.symbols),
-                hps_ms.data.filter_length // 2 + 1,
-                hps_ms.train.segment_size // hps_ms.data.hop_length,
-                n_speakers=hps_ms.data.n_speakers,
-                **hps_ms.model)
             if hps_ms is not None:
+                hps_ms = hps_ms if hps_ms is not None else api_hps_ms
+                net_g_ms = api_net_g_ms if hps_ms is None else SynthesizerTrn(
+                    len(hps_ms.symbols),
+                    hps_ms.data.filter_length // 2 + 1,
+                    hps_ms.train.segment_size // hps_ms.data.hop_length,
+                    n_speakers=hps_ms.data.n_speakers,
+                    **hps_ms.model)
+                print('重新运算')
                 _ = net_g_ms.eval()
                 utils.load_checkpoint(model, net_g_ms)
+            else:
+                hps_ms = api_hps_ms
+                net_g_ms = api_net_g_ms
         except:
             print('Failed to load!')
             sys.exit(1)
