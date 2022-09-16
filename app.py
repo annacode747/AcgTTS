@@ -15,6 +15,7 @@ import utils
 from Flask_Threadpool import FlaskThreadPool
 from interact import Interact, api_hps_ms, api_net_g_ms
 from response import ResponseData
+from pydub import AudioSegment
 
 app = Flask(__name__,
             static_url_path='/',  # 配置静态文件的访问 url 前缀
@@ -97,7 +98,8 @@ def wifeVoice():
     path_src = Path + "/static/" + time_str
     if not os.path.exists(path_src):  # 是否存在这个文件夹
         os.makedirs(path_src)  # 如果没有这个文件夹，那就创建一个
-    out_path = "{}/{}.wav".format(path_src, GetMd5(text))
+    fileName = GetMd5(text)
+    out_path = "{}/{}.wav".format(path_src, fileName)
     Interact(
         text=text,
         out_path=out_path,
@@ -108,20 +110,30 @@ def wifeVoice():
     )
     t = time.time() - t
     size = os.stat(out_path).st_size
+    wav2mp3(out_path, path_src)
     ret = {
         "time": t,
         "size": size,
         "path": out_path,
-        "url": "{}/{}/{}.wav".format(request.host, time_str, GetMd5(text))
+        "mp3": "{}/{}.mp3".format(path_src, fileName),
+        "url": "{}/{}/{}.wav".format(request.host, time_str, fileName)
     }
     log.info(ret)
     delFile()
     return ResponseData().renderSuccess(ret)
 
 
+def wav2mp3(filepath, savepath):
+    sourcefile = AudioSegment.from_wav(filepath)
+    filename = filepath.split('/')[-1].split('.wav')[0].replace(' ', '_') + '.mp3'
+    print("filename:", filename)
+    sourcefile.export("{}/{}".format(savepath, filename), format="mp3")
+
+
 def callback(future):
     e = future.exception()
-    log.error("异步任务的错误：{}".format(e))
+    # log.error("异步任务的错误：{}".format(e))
+
 
 
 @async_task.submit(callback)
@@ -131,6 +143,8 @@ def delFile(i=3):
     """
     path = "{}/static".format(Path)
     for file_name in os.listdir(path):
+        if '.' in file_name:
+            continue
         try:
             if datetime.datetime.now() + datetime.timedelta(days=-i) > datetime.datetime(
                     *time.strptime(file_name, timeConfig)[:6]):
