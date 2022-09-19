@@ -127,7 +127,7 @@ def wav2mp3(filepath, savepath):
     sourcefile = AudioSegment.from_wav(filepath)
     filename = filepath.split('/')[-1].split('.wav')[0].replace(' ', '_') + '.mp3'
     print("filename:", filename)
-    sourcefile.export("{}/{}".format(savepath, filename), format="mp3")
+    sourcefile.export("{}/{}".format(savepath, filename), format="mp3").close()
 
 
 def callback(future):
