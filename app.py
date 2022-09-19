@@ -88,7 +88,7 @@ def wifeVoice():
     hps_ms = None
     t = time.time()
     text = request.values.get("text")
-    speaker_id = request.values.get("speaker_id", randint(0, len(getSpeakers()) - 1))
+    speaker_id = int(request.values.get("speaker_id", randint(0, len(getSpeakers()) - 1)))
     choice = request.values.get("choice", 't')
     model = request.values.get("model", 'model/1374_epochs.pth')
     Config = request.values.get("config")
