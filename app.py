@@ -94,7 +94,7 @@ def wifeVoice():
     Config = request.values.get("config")
     if Config is not None:
         hps_ms = utils.get_hparams_from_file(Config)
-    time_str = GetTime()
+    time_str = GetTime(time.localtime(time.time()))
     path_src = Path + "/static/" + time_str
     if not os.path.exists(path_src):  # 是否存在这个文件夹
         os.makedirs(path_src)  # 如果没有这个文件夹，那就创建一个
