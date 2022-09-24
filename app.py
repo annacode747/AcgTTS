@@ -84,6 +84,7 @@ def wifeVoice():
     """
     …˙≥…¿œ∆≈”Ô“Ù
     """
+
     global hps_ms
     hps_ms = None
     t = time.time()
